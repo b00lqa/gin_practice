@@ -9,7 +9,10 @@ func main() {
 	router := gin.Default()
 	// Loading templates.
 	router.LoadHTMLGlob("templates/*")
-	// Defining router handler.
+	// Defining index router handler.
 	router.GET("/", showIndexPage)
+	// Defining article route handler.
+	router.GET("/article/view/:article_id", getArticle)
+
 	router.Run()
 }

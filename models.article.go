@@ -1,6 +1,8 @@
 package main
 
 import (
+	"errors"
+
 	"github.com/google/uuid"
 )
 
@@ -20,4 +22,15 @@ var articleList = []article{
 // Function for retreiving all articles.
 func getAllArticles() []article {
 	return articleList
+}
+
+// Function for getting article by it's id.
+func getArticleByID(id uuid.UUID) (*article, error) {
+	for _, article := range articleList {
+		if id == article.ID {
+			return &article, nil
+		}
+	}
+
+	return nil, errors.New("article not found")
 }
