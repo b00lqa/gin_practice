@@ -3,14 +3,17 @@ package main
 import (
 	"net/http"
 
+	"github.com/b00lqa/gin_practice/mongodb"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 // Function handler for processing index.html
 // with articles.
 func showIndexPage(ctx *gin.Context) {
-	articles := getAllArticles()
+	articles, err := mongodb.GetAllArticles(ctx)
+	if err != nil {
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+	}
 
 	render(
 		ctx,
@@ -22,13 +25,11 @@ func showIndexPage(ctx *gin.Context) {
 	)
 }
 
+// Function handler for viewing article.
 func getArticle(ctx *gin.Context) {
-	article_id, err := uuid.Parse(ctx.Param("article_id"))
-	if err != nil {
-		ctx.AbortWithError(http.StatusNotFound, err)
-	}
+	article_id := ctx.Param("article_id")
 
-	article, err := getArticleByID(article_id)
+	article, err := mongodb.GetArticleByID(ctx, article_id)
 	if err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 	}
@@ -42,20 +43,20 @@ func getArticle(ctx *gin.Context) {
 	)
 }
 
-// Render one of HTML, JSON or CSV based on the 'Accept' header of the request
+// Render one of HTML, JSON or XML based on the 'Accept' header of the request
 // If the header doesn't specify this, HTML is rendered, provided that
-// the template name is present
+// the template name is present.
 func render(ctx *gin.Context, data gin.H, templateName string) {
 
 	switch ctx.Request.Header.Get("Accept") {
 	case "application/json":
-		// Respond with JSON
+		// Respond with JSON.
 		ctx.JSON(http.StatusOK, data["payload"])
 	case "application/xml":
-		// Respond with XML
+		// Respond with XML.
 		ctx.XML(http.StatusOK, data["payload"])
 	default:
-		// Respond with HTML
+		// Respond with HTML.
 		ctx.HTML(http.StatusOK, templateName, data)
 	}
 

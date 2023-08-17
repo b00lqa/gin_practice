@@ -7,3 +7,5 @@ TODO:
 - [ ] Authentication
 - [ ] Articles for only logged in users
 - [ ] Add authors of articles
+- [ ] Docker-compose
+- [ ] ? Kubernetes
